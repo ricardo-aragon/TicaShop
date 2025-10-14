@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ticashop_app'
+    'ticashop_app',
 ]
 
 MIDDLEWARE = [
