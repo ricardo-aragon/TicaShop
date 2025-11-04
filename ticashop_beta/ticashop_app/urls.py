@@ -1,8 +1,17 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.documentation import include_docs_urls
+from rest_framework import routers
+from ticashop_app import views
 
-app_name = 'ticashop_app'
+router = routers.DefaultRouter()
+router.register(r'Usuario', views.usuarioView, 'usuario')
+router.register(r'Ticket', views.ticketView, 'ticket')
+router.register(r'Licitacion', views.licitacionView, 'licitacion')
+router.register(r'Reporte', views.reporteView, 'reporte')
+
+
 
 urlpatterns = [
-    
+    path('api/v1/', include(router.urls)),
+    path('docs/', include_docs_urls(title='ticashop API', public=True))
 ]
