@@ -20,17 +20,32 @@ export default function NewTicketModal({ onClose, onCreateTicket }: NewTicketMod
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    const priorityMap: Record<string, Priority> = {
+      'alta': 'high',
+      'media': 'medium',
+      'baja': 'low'
+    };
+    
+    const categoryMap: Record<string, Category> = {
+      'tecnico': 'technical',
+      'cuenta': 'account',
+      'pedido': 'order',
+      'facturacion': 'billing',
+      'otro': 'other'
+    };
+    
     onCreateTicket({
       customer: formData.customerName,
       email: formData.customerEmail,
       title: formData.title,
-      priority: formData.priority as Priority,
-      category: formData.category as Category,
+      priority: priorityMap[formData.priority] || 'low',
+      category: categoryMap[formData.category] || 'other',
       description: formData.description,
       phone: formData.phone,
-      status: 'abierto'
+      status: 'open'
     });
   };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
@@ -101,9 +116,9 @@ export default function NewTicketModal({ onClose, onCreateTicket }: NewTicketMod
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Seleccionar</option>
-                <option value="alta">Alta</option>
-                <option value="media">Media</option>
-                <option value="baja">Baja</option>
+                <option value="high">Alta</option>
+                <option value="medium">Media</option>
+                <option value="low">Baja</option>
               </select>
             </div>
             <div>
@@ -118,11 +133,11 @@ export default function NewTicketModal({ onClose, onCreateTicket }: NewTicketMod
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Seleccionar</option>
-                <option value="tecnico">Problema Técnico</option>
-                <option value="cuenta">Problema de Cuenta</option>
-                <option value="pedido">Problema con Pedido</option>
-                <option value="facturacion">Facturación</option>
-                <option value="otro">Otro</option>
+                <option value="technical">Problema Técnico</option>
+                <option value="account">Problema de Cuenta</option>
+                <option value="order">Problema con Pedido</option>
+                <option value="billing">Facturación</option>
+                <option value="other">Otro</option>
               </select>
             </div>
           </div>

@@ -7,6 +7,26 @@ interface TicketListProps {
 }
 
 export default function TicketList({ tickets, onTicketClick }: TicketListProps) {
+  // Mapear status de inglés a español para mostrar
+  const getStatusLabel = (status: string): string => {
+    const labels: Record<string, string> = {
+      'open': 'Abierto',
+      'in-progress': 'En Progreso',
+      'closed': 'Cerrado'
+    };
+    return labels[status] || status;
+  };
+
+  // Mapear prioridad de inglés a español para mostrar
+  const getPriorityLabel = (priority: string): string => {
+    const labels: Record<string, string> = {
+      'high': 'Alta',
+      'medium': 'Media',
+      'low': 'Baja'
+    };
+    return labels[priority] || priority;
+  };
+
   if (tickets.length === 0) {
     return (
       <div className="text-center py-12">
@@ -31,10 +51,10 @@ export default function TicketList({ tickets, onTicketClick }: TicketListProps) 
             </div>
             <div className="flex space-x-2">
               <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(ticket.priority)}`}>
-                {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                {getPriorityLabel(ticket.priority)}
               </span>
               <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(ticket.status)}`}>
-                {ticket.status === 'en-progreso' ? 'En Progreso' : ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                {getStatusLabel(ticket.status)}
               </span>
             </div>
           </div>

@@ -6,9 +6,9 @@ interface StatsCardsProps {
 
 export default function StatsCards({ tickets }: StatsCardsProps) {
   const totalTickets = tickets.length;
-  const openTickets = tickets.filter(t => t.status === 'abierto').length;
-  const inProgressTickets = tickets.filter(t => t.status === 'en-progreso').length;
-  const resolvedTickets = tickets.filter(t => t.status === 'resuelto').length;
+  const openTickets = tickets.filter(t => t.status === 'open').length; 
+  const inProgressTickets = tickets.filter(t => t.status === 'in-progress').length; 
+  const resolvedTickets = tickets.filter(t => t.status === 'closed').length;  
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

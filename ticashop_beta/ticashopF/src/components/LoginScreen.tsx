@@ -27,7 +27,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     }
 
     try {
-      // Buscar usuario por correo (username)
+      
       const response = await getUsuarioByCorreo(username);
       
       if (response.data.length === 0) {
@@ -38,21 +38,21 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
       const usuario = response.data[0];
 
-      // Verificar contraseña (en producción esto debería ser en el backend)
+      
       if (usuario.password !== password) {
         setError('Contraseña incorrecta');
         setIsLoading(false);
         return;
       }
 
-      // Verificar que sea rol de soporte
+     
       if (usuario.rol !== 'soporte' && usuario.rol !== 'admin') {
         setError('No tienes permisos de acceso al sistema de soporte');
         setIsLoading(false);
         return;
       }
 
-      // Mapear usuario de Django a formato de la app
+     
       const userMapped: User = {
         username: usuario.correo,
         name: `${usuario.nombre} ${usuario.apellido}`,
@@ -61,7 +61,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         permissions: getPermissionsByRole(usuario.rol)
       };
 
-      // Guardar en localStorage
+      
       localStorage.setItem('user', JSON.stringify(userMapped));
       localStorage.setItem('userId', usuario.id.toString());
 
@@ -95,7 +95,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           <p className="text-blue-100 text-sm">Sistema de Gestión Empresarial</p>
         </div>
 
-        {/* Formulario de Login */}
+        
         <div className="px-8 py-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -201,7 +201,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             )}
           </form>
 
-          {/* Información de acceso */}
+          
           {showAccessInfo && userType === 'soporte' && (
             <div className="mt-6 p-4 bg-gray-50 rounded-lg fade-in">
               <h4 className="font-semibold text-gray-800 mb-2">Instrucciones:</h4>
@@ -213,7 +213,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             </div>
           )}
 
-          {/* Enlaces adicionales */}
+          
           <div className="mt-6 text-center space-y-2">
             {userType === 'soporte' && (
               <button

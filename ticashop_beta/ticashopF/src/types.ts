@@ -1,6 +1,6 @@
-export type Priority = 'alta' | 'media' | 'baja';
-export type TicketStatus = 'abierto' | 'en-progreso' | 'resuelto';
-export type Category = 'tecnico' | 'cuenta' | 'pedido' | 'facturacion' | 'otro';
+export type Priority = 'high' | 'medium' | 'low';
+export type TicketStatus = 'open' | 'in-progress' | 'closed';
+export type Category = 'technical' | 'account' | 'order' | 'billing' | 'other';
 export type LicitacionStatus = 'borrador' | 'publicada' | 'en-evaluacion' | 'adjudicada' | 'cancelada';
 export type LicitacionTipo = 'servicios' | 'productos' | 'obras' | 'consultoria';
 export type CommentType = 'system' | 'agent' | 'customer';
@@ -22,7 +22,7 @@ export interface Ticket {
   status: TicketStatus;
   customer: string;
   email: string;
-  phone: string;
+  phone?: string;
   createdAt: Date;
   updatedAt: Date;
   assignedTo: string | null;
@@ -31,18 +31,22 @@ export interface Ticket {
 
 export interface Licitacion {
   id: number;
-  numero: string;
+  numero?: string;
   titulo: string;
   descripcion: string;
-  tipo: LicitacionTipo;
-  monto: number;
-  moneda: string;
-  entidad: string;
-  fechaInicio: Date;
-  fechaCierre: Date;
-  status: LicitacionStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  tipo?: LicitacionTipo;
+  monto?: number;
+  moneda?: string;
+  entidad?: string;
+  fechaInicio?: Date;
+  fechaCierre?: Date;
+  status?: LicitacionStatus;
+  estado: string;
+  propuesta: string;
+  fechaCreacion: Date;
+  cliente: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface User {

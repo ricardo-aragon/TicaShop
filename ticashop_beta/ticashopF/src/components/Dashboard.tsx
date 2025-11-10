@@ -38,7 +38,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
   const [priorityFilter, setPriorityFilter] = useState<Priority | ''>('');
   const [categoryFilter, setCategoryFilter] = useState<Category | ''>('');
 
-  // Cargar datos al montar el componente
+  
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -51,14 +51,14 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         getAllLicitaciones()
       ]);
 
-      // Mapear tickets de Django al formato de la app
+      
       const ticketsMapeados: Ticket[] = ticketsRes.data.map((t: any) => ({
         id: t.id,
-        title: t.desc.substring(0, 50), // Usar descripción como título
+        title: t.desc.substring(0, 50), 
         customer: t.idUsuario?.nombre || 'Cliente Desconocido',
         email: t.idUsuario?.correo || '',
         priority: mapPriorityFromEstado(t.estado),
-        category: 'technical', // Categoría por defecto
+        category: 'technical', 
         status: mapStatusFromEstado(t.estado),
         description: t.desc,
         createdAt: new Date(t.fecha_creacion),
@@ -67,7 +67,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         comments: []
       }));
 
-      // Mapear licitaciones
+      
       const licitacionesMapeadas: Licitacion[] = licitacionesRes.data.map((l: any) => ({
         id: l.id,
         titulo: l.desc.substring(0, 50),
@@ -76,7 +76,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         estado: l.estado,
         fechaCreacion: new Date(l.fecha_creacion),
         cliente: l.idUsuario?.nombre || 'Cliente Desconocido',
-        monto: 0 // No existe en el modelo, poner default
+        monto: 0 
       }));
 
       setTickets(ticketsMapeados);
@@ -89,14 +89,14 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
     }
   };
 
-  // Mapear estado de Django a Priority
+  
   const mapPriorityFromEstado = (estado: string): Priority => {
     if (estado.toLowerCase().includes('urgente')) return 'high';
     if (estado.toLowerCase().includes('importante')) return 'medium';
     return 'low';
   };
 
-  // Mapear estado de Django a TicketStatus
+  
   const mapStatusFromEstado = (estado: string): TicketStatus => {
     const estadoLower = estado.toLowerCase();
     if (estadoLower.includes('abierto') || estadoLower.includes('nuevo')) return 'open';
@@ -105,7 +105,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
     return 'open';
   };
 
-  // Mapear TicketStatus a estado de Django
+  
   const mapStatusToDjango = (status: TicketStatus): string => {
     const statusMap: Record<TicketStatus, string> = {
       'open': 'Abierto',
@@ -124,7 +124,6 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
 
   const handleCreateTicket = async (ticketData: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'comments' | 'assignedTo'>) => {
     try {
-      // Obtener el ID del usuario actual desde localStorage
       const userId = localStorage.getItem('userId');
       
       if (!userId) {
@@ -132,39 +131,26 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         return;
       }
 
-      // Crear ticket en Django
+      
       const nuevoTicketDjango = {
-        idUsuario: parseInt(userId),
+        idUsuario_id: parseInt(userId),  
         desc: ticketData.description,
         estado: mapStatusToDjango(ticketData.status)
       };
 
       const response = await createTicket(nuevoTicketDjango);
 
-      // Crear ticket en formato local
-      const newTicket: Ticket = {
-        ...ticketData,
-        id: response.data.id,
-        createdAt: new Date(response.data.fecha_creacion),
-        updatedAt: new Date(response.data.fecha_creacion),
-        assignedTo: null,
-        comments: [
-          {
-            id: 1,
-            author: 'Sistema',
-            content: 'Ticket creado desde el panel de soporte',
-            timestamp: new Date(),
-            type: 'system'
-          }
-        ]
-      };
-
-      setTickets([newTicket, ...tickets]);
+      
+      await cargarDatos();
+      
       setShowNewTicketModal(false);
       showNotification('Ticket creado exitosamente', 'success');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al crear ticket:', error);
-      showNotification('Error al crear el ticket', 'error');
+      const errorMsg = error.response?.data?.detail || 
+                       error.response?.data?.idUsuario_id?.[0] || 
+                       'Error al crear el ticket';
+      showNotification(errorMsg, 'error');
     }
   };
 
@@ -175,7 +161,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
 
   const handleUpdateTicket = async (updatedTicket: Ticket) => {
     try {
-      // Actualizar en Django
+      
       const ticketDjango = {
         desc: updatedTicket.description,
         estado: mapStatusToDjango(updatedTicket.status)
@@ -183,7 +169,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
 
       await updateTicket(updatedTicket.id, ticketDjango);
 
-      // Actualizar en el estado local
+     
       setTickets(tickets.map(t => t.id === updatedTicket.id ? updatedTicket : t));
       showNotification('Ticket actualizado exitosamente', 'success');
     } catch (error) {
@@ -277,12 +263,12 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Estadísticas Principales */}
+      
       <StatsCards tickets={tickets} />
 
-      {/* Panel Principal */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Lista de Tickets */}
+       
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow-sm">
             <div className="p-6 border-b border-gray-200">
@@ -325,7 +311,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
           </div>
         </div>
 
-        {/* Panel de Control */}
+        
         <div className="space-y-6">
           <Filters
             statusFilter={statusFilter}
@@ -346,7 +332,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         </div>
       </div>
 
-      {/* Modales */}
+      
       {showNewTicketModal && (
         <NewTicketModal
           onClose={() => setShowNewTicketModal(false)}

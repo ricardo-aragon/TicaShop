@@ -18,13 +18,13 @@ export default function QuickActions({
       <h4 className="text-lg font-semibold text-gray-800 mb-4">Acciones Rápidas</h4>
       <div className="space-y-3">
         <button
-          onClick={() => onShowTicketsByStatus('abierto')}
+          onClick={() => onShowTicketsByStatus('open')}  
           className="w-full px-3 py-2 bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors"
         >
           Ver Tickets Abiertos
         </button>
         <button
-          onClick={() => onShowTicketsByPriority('alta')}
+          onClick={() => onShowTicketsByPriority('high')} 
           className="w-full px-3 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors"
         >
           Ver Prioridad Alta

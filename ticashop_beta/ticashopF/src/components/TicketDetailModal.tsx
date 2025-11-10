@@ -13,6 +13,16 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
   const [newComment, setNewComment] = useState('');
   const [statusUpdate, setStatusUpdate] = useState<TicketStatus | ''>('');
 
+  
+  const getStatusLabel = (status: TicketStatus): string => {
+    const labels: Record<TicketStatus, string> = {
+      'open': 'Abierto',
+      'in-progress': 'En Progreso',
+      'closed': 'Cerrado'
+    };
+    return labels[status];
+  };
+
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -30,13 +40,13 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
     };
     updatedTicket.comments.push(comment);
 
-    // Actualizar estado si se seleccionó uno nuevo
+    
     if (statusUpdate && statusUpdate !== ticket.status) {
       updatedTicket.status = statusUpdate;
       const statusComment = {
         id: updatedTicket.comments.length + 1,
         author: 'Sistema',
-        content: `Estado cambiado a: ${statusUpdate === 'en-progreso' ? 'En Progreso' : statusUpdate.charAt(0).toUpperCase() + statusUpdate.slice(1)}`,
+        content: `Estado cambiado a: ${getStatusLabel(statusUpdate)}`,
         timestamp: new Date(),
         type: 'system' as const
       };
@@ -61,19 +71,19 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
     const statusComment = {
       id: ticket.comments.length + 1,
       author: 'Sistema',
-      content: `Estado cambiado a: ${newStatus === 'en-progreso' ? 'En Progreso' : newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
+      content: `Estado cambiado a: ${getStatusLabel(newStatus)}`,
       timestamp: new Date(),
       type: 'system' as const
     };
     updatedTicket.comments.push(statusComment);
 
     onUpdateTicket(updatedTicket);
-    showNotification(`Ticket marcado como ${newStatus === 'en-progreso' ? 'En Progreso' : newStatus}`, 'success');
+    showNotification(`Ticket marcado como ${getStatusLabel(newStatus)}`, 'success');
   };
 
   const escalateTicket = () => {
     const updatedTicket = { ...ticket };
-    updatedTicket.priority = 'alta';
+    updatedTicket.priority = 'high';  
     updatedTicket.updatedAt = new Date();
 
     const escalationComment = {
@@ -115,6 +125,16 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
     ? Math.floor((ticket.comments[1].timestamp.getTime() - ticket.createdAt.getTime()) / (1000 * 60 * 60))
     : 0;
 
+ 
+  const getPriorityLabel = (priority: string): string => {
+    const labels: Record<string, string> = {
+      'high': 'Alta',
+      'medium': 'Media',
+      'low': 'Baja'
+    };
+    return labels[priority] || priority;
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 my-8 max-h-[90vh] overflow-y-auto fade-in" onClick={(e) => e.stopPropagation()}>
@@ -133,15 +153,15 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
 
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Información del Ticket */}
+            
             <div className="lg:col-span-2">
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
                   <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getPriorityColor(ticket.priority)}`}>
-                    Prioridad: {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                    Prioridad: {getPriorityLabel(ticket.priority)}
                   </span>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(ticket.status)}`}>
-                    Estado: {ticket.status === 'en-progreso' ? 'En Progreso' : ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                    Estado: {getStatusLabel(ticket.status)}
                   </span>
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 border border-gray-200">
                     Categoría: {getCategoryName(ticket.category)}
@@ -172,7 +192,7 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
                 </div>
               </div>
 
-              {/* Sección de comentarios */}
+             
               <div className="mt-6 border-t border-gray-200 pt-6">
                 <h4 className="text-md font-semibold text-gray-800 mb-4">Historial de Comentarios</h4>
                 <div className="space-y-4 mb-6">
@@ -219,9 +239,9 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
                       className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Mantener estado actual</option>
-                      <option value="abierto">Cambiar a Abierto</option>
-                      <option value="en-progreso">Cambiar a En Progreso</option>
-                      <option value="resuelto">Cambiar a Resuelto</option>
+                      <option value="open">Cambiar a Abierto</option>
+                      <option value="in-progress">Cambiar a En Progreso</option>
+                      <option value="closed">Cambiar a Cerrado</option>
                     </select>
                     <button
                       type="submit"
@@ -234,22 +254,22 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
               </div>
             </div>
 
-            {/* Panel de Acciones */}
+            
             <div className="space-y-4">
               <div className="bg-gray-50 rounded-lg p-4">
                 <h5 className="font-semibold text-gray-800 mb-3">Acciones Rápidas</h5>
                 <div className="space-y-2">
                   <button
-                    onClick={() => changeTicketStatus('en-progreso')}
+                    onClick={() => changeTicketStatus('in-progress')}
                     className="w-full px-3 py-2 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors text-sm"
                   >
                     Marcar En Progreso
                   </button>
                   <button
-                    onClick={() => changeTicketStatus('resuelto')}
+                    onClick={() => changeTicketStatus('closed')}
                     className="w-full px-3 py-2 bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors text-sm"
                   >
-                    Marcar Resuelto
+                    Marcar Cerrado
                   </button>
                   <button
                     onClick={escalateTicket}
