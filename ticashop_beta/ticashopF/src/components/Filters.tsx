@@ -36,7 +36,7 @@ export default function Filters({
       </div>
       
       <div className="space-y-4">
-        {/* Filtro de Estado */}
+       
         <div>
           <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-2">
             Estado
@@ -54,7 +54,7 @@ export default function Filters({
           </select>
         </div>
 
-        {/* Filtro de Prioridad */}
+       
         <div>
           <label htmlFor="priority-filter" className="block text-sm font-medium text-gray-700 mb-2">
             Prioridad
@@ -72,7 +72,7 @@ export default function Filters({
           </select>
         </div>
 
-        {/* Filtro de Categoría */}
+
         <div>
           <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-2">
             Categoría
@@ -92,7 +92,7 @@ export default function Filters({
           </select>
         </div>
 
-        {/* Indicador de filtros activos */}
+  
         {hasActiveFilters && (
           <div className="pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-600 mb-2">Filtros activos:</p>

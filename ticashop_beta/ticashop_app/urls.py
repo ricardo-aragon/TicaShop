@@ -13,5 +13,6 @@ router.register(r'Reporte', views.reporteView, 'reporte')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
+    path('api/v1/auth/login/', views.login_view, name='login'),
     path('docs/', include_docs_urls(title='ticashop API', public=True))
 ]

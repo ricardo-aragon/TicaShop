@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { User } from '../types';
-import { getUsuarioByCorreo } from "../api/api";
+import { login } from "../api/api";
 
 interface LoginScreenProps {
   onLogin: (user: User) => void;
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
-  const [userType, setUserType] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showAccessInfo, setShowAccessInfo] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,39 +18,16 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     setError('');
     setIsLoading(true);
 
-    if (userType !== 'soporte') {
-      setError('Solo se permite acceso a usuarios de Soporte Técnico');
-      setIsLoading(false);
-      return;
-    }
-
     try {
+   
+      const response = await login(username, password);
       
-      const response = await getUsuarioByCorreo(username);
+      const { user: usuario, token } = response.data;
+
+    
+      localStorage.setItem('token', token);
       
-      if (response.data.length === 0) {
-        setError('Usuario no encontrado');
-        setIsLoading(false);
-        return;
-      }
-
-      const usuario = response.data[0];
-
-      
-      if (usuario.password !== password) {
-        setError('Contraseña incorrecta');
-        setIsLoading(false);
-        return;
-      }
-
-     
-      if (usuario.rol !== 'soporte' && usuario.rol !== 'admin') {
-        setError('No tienes permisos de acceso al sistema de soporte');
-        setIsLoading(false);
-        return;
-      }
-
-     
+    
       const userMapped: User = {
         username: usuario.correo,
         name: `${usuario.nombre} ${usuario.apellido}`,
@@ -61,17 +36,27 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         permissions: getPermissionsByRole(usuario.rol)
       };
 
-      
+     
       localStorage.setItem('user', JSON.stringify(userMapped));
       localStorage.setItem('userId', usuario.id.toString());
 
-      setTimeout(() => {
-        onLogin(userMapped);
-      }, 1500);
+    
+      onLogin(userMapped);
 
     } catch (error: any) {
       console.error('Error al iniciar sesión:', error);
-      setError(error.response?.data?.message || 'Error al conectar con el servidor');
+      
+   
+      if (error.response?.status === 404) {
+        setError('Usuario no encontrado');
+      } else if (error.response?.status === 401) {
+        setError('Contraseña incorrecta');
+      } else if (error.response?.status === 403) {
+        setError('No tienes permisos de acceso al sistema de soporte');
+      } else {
+        setError(error.response?.data?.error || 'Error al conectar con el servidor');
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -86,147 +71,121 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden fade-in">
-        {/* Header del Login */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
+     
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 text-center">
-          <div className="text-4xl mb-2">🔧</div>
-          <h1 className="text-2xl font-bold text-white">TiCaShop</h1>
-          <p className="text-blue-100 text-sm">Sistema de Gestión Empresarial</p>
+          <div className="text-5xl mb-3">🔧</div>
+          <h1 className="text-3xl font-bold text-white mb-1">TiCaShop</h1>
+          <p className="text-blue-100 text-sm">Sistema de Gestión de Soporte</p>
         </div>
 
-        
-        <div className="px-8 py-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+ 
+        <div className="px-8 py-8">
+          <div className="mb-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Iniciar Sesión</h2>
+            <p className="text-gray-600 text-sm">Ingresa tus credenciales de acceso</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+      
             <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-2">
-                Tipo de Usuario
+              <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
+                Correo Electrónico
               </label>
-              <select
-                id="userType"
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Seleccionar tipo de usuario</option>
-                <option value="cliente" disabled className="text-gray-400">👤 Cliente (No disponible)</option>
-                <option value="vendedor" disabled className="text-gray-400">🛍️ Vendedor (No disponible)</option>
-                <option value="comercial" disabled className="text-gray-400">📊 Área Comercial (No disponible)</option>
-                <option value="bodega" disabled className="text-gray-400">📦 Encargado de Bodega (No disponible)</option>
-                <option value="admin" disabled className="text-gray-400">⚙️ Admin (No disponible)</option>
-                <option value="finanzas" disabled className="text-gray-400">💰 Finanzas (No disponible)</option>
-                <option value="rrhh" disabled className="text-gray-400">👥 RRHH (No disponible)</option>
-                <option value="soporte" className="text-green-600">🔧 Soporte Técnico</option>
-                <option value="administrador" disabled className="text-gray-400">👨‍💼 Administrador (No disponible)</option>
-                <option value="auditor" disabled className="text-gray-400">🔍 Auditor (No disponible)</option>
-              </select>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-400">📧</span>
+                </div>
+                <input
+                  type="email"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="ejemplo@ticashop.com"
+                  autoComplete="email"
+                />
+              </div>
             </div>
 
-            {userType === 'soporte' && (
-              <div className="space-y-4 fade-in">
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                    Correo Electrónico
-                  </label>
-                  <input
-                    type="email"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="ejemplo@ticashop.com"
-                  />
+       
+            <div>
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                Contraseña
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-400">🔒</span>
                 </div>
-
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                    Contraseña
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
-                      placeholder="Ingrese su contraseña"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                      <span>{showPassword ? '🙈' : '👁️'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-2xl">🔧</span>
-                    <div>
-                      <h4 className="font-semibold text-blue-900">Soporte Técnico</h4>
-                      <p className="text-sm text-blue-700">Acceso completo al sistema de tickets, licitaciones y reportes</p>
-                    </div>
-                  </div>
-                </div>
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 fade-in">
-                    <div className="flex items-center space-x-2">
-                      <span>❌</span>
-                      <p className="text-sm text-red-700">{error}</p>
-                    </div>
-                  </div>
-                )}
-
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Ingresa tu contraseña"
+                  autoComplete="current-password"
+                />
                 <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  tabIndex={-1}
                 >
-                  {isLoading ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>Iniciando sesión...</span>
-                    </div>
-                  ) : (
-                    'Iniciar Sesión'
-                  )}
+                  <span className="text-xl">{showPassword ? '🙈' : '👁️'}</span>
                 </button>
               </div>
-            )}
-          </form>
+            </div>
 
-          
-          {showAccessInfo && userType === 'soporte' && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg fade-in">
-              <h4 className="font-semibold text-gray-800 mb-2">Instrucciones:</h4>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>1. Crea un usuario en Django con rol 'soporte'</p>
-                <p>2. Usa el correo del usuario para iniciar sesión</p>
-                <p>3. Ingresa la contraseña configurada</p>
+     
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-500 rounded-md p-4 animate-shake">
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">⚠️</span>
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
+                </div>
+              </div>
+            )}
+
+        
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <span className="text-2xl mt-0.5">🔧</span>
+                <div>
+                  <h4 className="font-semibold text-blue-900 mb-1">Acceso para Personal de Soporte</h4>
+                  <p className="text-sm text-blue-700">
+                    Solo usuarios con rol de <strong>Soporte Técnico</strong> o <strong>Admin</strong> pueden acceder a este sistema.
+                  </p>
+                </div>
               </div>
             </div>
-          )}
 
-          
-          <div className="mt-6 text-center space-y-2">
-            {userType === 'soporte' && (
-              <button
-                type="button"
-                onClick={() => setShowAccessInfo(!showAccessInfo)}
-                className="text-sm text-blue-600 hover:text-blue-800 underline"
-              >
-                ¿Cómo obtener acceso?
-              </button>
-            )}
-            <div className="text-xs text-gray-500">
-              <p>© 2024 TiCaShop - Sistema de Gestión Empresarial</p>
-            </div>
+      
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 px-4 rounded-lg font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Iniciando sesión...</span>
+                </div>
+              ) : (
+                <span>Iniciar Sesión →</span>
+              )}
+            </button>
+          </form>
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500">
+              © 2024 TiCaShop - Sistema de Gestión Empresarial
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Versión 1.0.0
+            </p>
           </div>
         </div>
       </div>

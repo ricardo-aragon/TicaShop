@@ -7,7 +7,7 @@ interface TicketListProps {
 }
 
 export default function TicketList({ tickets, onTicketClick }: TicketListProps) {
-  // Mapear status de inglés a español para mostrar
+  
   const getStatusLabel = (status: string): string => {
     const labels: Record<string, string> = {
       'open': 'Abierto',
@@ -17,7 +17,7 @@ export default function TicketList({ tickets, onTicketClick }: TicketListProps) 
     return labels[status] || status;
   };
 
-  // Mapear prioridad de inglés a español para mostrar
+ 
   const getPriorityLabel = (priority: string): string => {
     const labels: Record<string, string> = {
       'high': 'Alta',

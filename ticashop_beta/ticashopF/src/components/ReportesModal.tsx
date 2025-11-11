@@ -42,7 +42,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
     ? (licitaciones.filter(l => l.estado?.toLowerCase().includes('adjudicada')).length / licitaciones.length * 100) 
     : 0;
 
-  // Calcular tiempo promedio de resolución (en horas)
+
   const calcularTiempoPromedioResolucion = (): number => {
     const ticketsCerrados = tickets.filter(t => t.status === 'closed');
     if (ticketsCerrados.length === 0) return 0;
@@ -55,7 +55,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
     return tiempoTotal / ticketsCerrados.length;
   };
 
-  // Cargar reportes guardados
+
   useEffect(() => {
     cargarReportesGuardados();
   }, []);
@@ -72,7 +72,6 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
     }
   };
 
-  // Generar y guardar reporte en la base de datos
   const generarYGuardarReporte = async () => {
     setGeneratingReport(true);
     try {
@@ -87,7 +86,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
       setReportesGuardados([response.data, ...reportesGuardados]);
       showNotification('Reporte generado y guardado exitosamente', 'success');
       
-      // Cambiar a la pestaña de historial
+   
       setActiveTab('historial');
     } catch (error: any) {
       console.error('Error al generar reporte:', error);
@@ -212,7 +211,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
         </div>
 
         <div className="p-6">
-          {/* Tabs de Reportes */}
+    
           <div className="border-b border-gray-200 mb-6">
             <nav className="-mb-px flex space-x-8">
               <button onClick={() => setActiveTab('tickets')} className={tabClasses('tickets')}>
@@ -230,7 +229,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
             </nav>
           </div>
 
-          {/* Contenido de Reportes de Tickets */}
+       
           {activeTab === 'tickets' && (
             <div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -321,7 +320,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
             </div>
           )}
 
-          {/* Contenido de Reportes de Licitaciones */}
+         
           {activeTab === 'licitaciones' && (
             <div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -387,7 +386,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
             </div>
           )}
 
-          {/* Contenido de Reportes de Rendimiento */}
+        
           {activeTab === 'rendimiento' && (
             <div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -479,7 +478,7 @@ export default function ReportesModal({ tickets, licitaciones, onClose }: Report
             </div>
           )}
 
-          {/* Nueva pestaña: Historial de Reportes */}
+    
           {activeTab === 'historial' && (
             <div>
               {loadingReportes ? (

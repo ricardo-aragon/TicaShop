@@ -5,6 +5,8 @@ import { getAllTickets } from '../api/api';
 interface HeaderProps {
   user: User | null;
   onLogout: () => void;
+  onNavigateToAdmin?: () => void;
+  showAdminButton?: boolean;
 }
 
 interface Notification {
@@ -17,16 +19,14 @@ interface Notification {
   isRead: boolean;
 }
 
-export default function Header({ user, onLogout }: HeaderProps) {
+export default function Header({ user, onLogout, onNavigateToAdmin, showAdminButton }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Cargar notificaciones al montar el componente
   useEffect(() => {
     cargarNotificaciones();
-    // Recargar notificaciones cada 30 segundos
     const interval = setInterval(cargarNotificaciones, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -39,7 +39,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
       
       const nuevasNotificaciones: Notification[] = [];
 
-      // Notificaciones de tickets de alta prioridad abiertos
       const ticketsAltaPrioridad = tickets.filter((t: any) => {
         const estado = t.estado?.toLowerCase() || '';
         return estado.includes('urgente') || estado.includes('alta prioridad');
@@ -57,7 +56,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
         });
       });
 
-      // Notificaciones de tickets nuevos (últimas 24 horas)
       const hace24Horas = new Date();
       hace24Horas.setHours(hace24Horas.getHours() - 24);
 
@@ -68,7 +66,7 @@ export default function Header({ user, onLogout }: HeaderProps) {
 
       ticketsNuevos.slice(0, 3).forEach((ticket: any) => {
         nuevasNotificaciones.push({
-          id: ticket.id + 1000, // Offset para evitar duplicados de ID
+          id: ticket.id + 1000,
           type: 'new',
           title: 'Nuevo ticket recibido',
           message: `De: ${ticket.idUsuario?.nombre || 'Usuario'}`,
@@ -78,7 +76,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
         });
       });
 
-      // Notificaciones de tickets resueltos recientemente
       const ticketsResueltos = tickets.filter((t: any) => {
         const estado = t.estado?.toLowerCase() || '';
         return (estado.includes('cerrado') || estado.includes('resuelto')) && 
@@ -98,7 +95,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
         });
       });
 
-      // Notificaciones de tickets asignados al usuario actual
       const ticketsAsignados = tickets.filter((t: any) => {
         return t.idTecnico?.id === parseInt(localStorage.getItem('userId') || '0');
       });
@@ -115,7 +111,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
         });
       });
 
-      // Ordenar por fecha más reciente y limitar a 10 notificaciones
       nuevasNotificaciones.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
       setNotifications(nuevasNotificaciones.slice(0, 10));
     } catch (error) {
@@ -146,41 +141,28 @@ export default function Header({ user, onLogout }: HeaderProps) {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'high-priority':
-        return '🚨';
-      case 'comment':
-        return '💬';
-      case 'resolved':
-        return '✅';
-      case 'new':
-        return '🆕';
-      case 'assigned':
-        return '👤';
-      default:
-        return '📌';
+      case 'high-priority': return '🚨';
+      case 'comment': return '💬';
+      case 'resolved': return '✅';
+      case 'new': return '🆕';
+      case 'assigned': return '👤';
+      default: return '📌';
     }
   };
 
   const getNotificationColor = (type: string) => {
     switch (type) {
-      case 'high-priority':
-        return 'bg-red-50 border-l-4 border-red-500';
-      case 'comment':
-        return 'bg-blue-50 border-l-4 border-blue-500';
-      case 'resolved':
-        return 'bg-green-50 border-l-4 border-green-500';
-      case 'new':
-        return 'bg-purple-50 border-l-4 border-purple-500';
-      case 'assigned':
-        return 'bg-yellow-50 border-l-4 border-yellow-500';
-      default:
-        return 'bg-gray-50 border-l-4 border-gray-500';
+      case 'high-priority': return 'bg-red-50 border-l-4 border-red-500';
+      case 'comment': return 'bg-blue-50 border-l-4 border-blue-500';
+      case 'resolved': return 'bg-green-50 border-l-4 border-green-500';
+      case 'new': return 'bg-purple-50 border-l-4 border-purple-500';
+      case 'assigned': return 'bg-yellow-50 border-l-4 border-yellow-500';
+      default: return 'bg-gray-50 border-l-4 border-gray-500';
     }
   };
 
   const getTimeAgo = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    
     if (seconds < 60) return 'Hace un momento';
     if (seconds < 3600) return `Hace ${Math.floor(seconds / 60)} minutos`;
     if (seconds < 86400) return `Hace ${Math.floor(seconds / 3600)} horas`;
@@ -203,6 +185,16 @@ export default function Header({ user, onLogout }: HeaderProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {showAdminButton && onNavigateToAdmin && (
+                <button
+                  onClick={onNavigateToAdmin}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium shadow-md hover:shadow-lg flex items-center space-x-2"
+                >
+                  <span>⚙️</span>
+                  <span>Panel Admin</span>
+                </button>
+              )}
+
               <div className="relative">
                 <button
                   onClick={() => {
@@ -223,7 +215,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
 
                 {showNotifications && (
                   <>
-                    {/* Overlay para cerrar al hacer clic fuera */}
                     <div 
                       className="fixed inset-0 z-30" 
                       onClick={() => setShowNotifications(false)}
@@ -298,10 +289,7 @@ export default function Header({ user, onLogout }: HeaderProps) {
                       {notifications.length > 0 && (
                         <div className="p-3 border-t border-gray-200 bg-gray-50">
                           <button
-                            onClick={() => {
-                              setShowNotifications(false);
-                              // Aquí podrías redirigir a una página de todas las notificaciones
-                            }}
+                            onClick={() => setShowNotifications(false)}
                             className="text-sm text-blue-600 hover:text-blue-800 w-full text-center"
                           >
                             Ver todas las notificaciones
@@ -312,6 +300,7 @@ export default function Header({ user, onLogout }: HeaderProps) {
                   </>
                 )}
               </div>
+              
               <div className="flex items-center space-x-2">
                 <span className="text-gray-700 font-medium">{user?.name}</span>
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -329,7 +318,6 @@ export default function Header({ user, onLogout }: HeaderProps) {
         </div>
       </header>
 
-      {/* Modal de confirmación de logout */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-sm mx-4 fade-in">

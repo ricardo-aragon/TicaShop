@@ -1,9 +1,65 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from .serializer import *
 from .models import *
+
+@api_view(['POST'])
+def login_view(request):
+    """
+    Endpoint de login seguro
+    """
+    correo = request.data.get('username')  # En el frontend se envía como username
+    password = request.data.get('password')
+    
+    if not correo or not password:
+        return Response(
+            {'error': 'Correo y contraseña son requeridos'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        # Buscar usuario por correo
+        usuario = Usuario.objects.get(correo=correo)
+        
+        # Verificar contraseña (usa check_password si hasheas las contraseñas)
+        # Por ahora comparación directa
+        if usuario.password != password:
+            return Response(
+                {'error': 'Contraseña incorrecta'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        # Verificar que tenga permisos de acceso
+        if usuario.rol not in ['admin', 'soporte', 'tecnico']:
+            return Response(
+                {'error': 'No tienes permisos de acceso al sistema'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Login exitoso
+        serializer = UsuarioSerializer(usuario)
+        
+        # Generar token simple (deberías usar JWT en producción)
+        token = f"token_{usuario.id}_{usuario.correo}"
+        
+        return Response({
+            'user': serializer.data,
+            'token': token,
+            'message': 'Login exitoso'
+        }, status=status.HTTP_200_OK)
+        
+    except Usuario.DoesNotExist:
+        return Response(
+            {'error': 'Usuario no encontrado'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 class usuarioView(viewsets.ModelViewSet):
     serializer_class = UsuarioSerializer

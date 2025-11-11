@@ -16,7 +16,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
   const [typeFilter, setTypeFilter] = useState<LicitacionTipo | ''>('');
   const [loading, setLoading] = useState(false);
 
-  // Formulario de nueva licitación
+
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
@@ -31,7 +31,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
     numero: ''
   });
 
-  // Helper para obtener el estado de la licitación
+ 
   const getEstado = (l: Licitacion): string => {
     return (l.estado || l.status || '').toLowerCase();
   };
@@ -109,7 +109,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
         return;
       }
 
-      // Crear licitación en Django
+     
       const nuevaLicitacion = {
         idUsuario_id: parseInt(userId),
         desc: formData.descripcion,
@@ -122,7 +122,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
 
       const response = await createLicitacion(nuevaLicitacion);
 
-      // Mapear la licitación creada al formato de la app
+   
       const licitacionMapeada: Licitacion = {
         id: response.data.id,
         numero: formData.numero || `LIC-${response.data.id}`,
@@ -143,10 +143,10 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
         updatedAt: new Date(response.data.fecha_creacion)
       };
 
-      // Agregar a la lista
+  
       setLicitaciones([licitacionMapeada, ...licitaciones]);
       
-      // Resetear formulario
+     
       setFormData({
         titulo: '',
         descripcion: '',
@@ -207,7 +207,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
         </div>
 
         <div className="p-6">
-          {/* Estadísticas de Licitaciones */}
+          
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-blue-50 rounded-lg p-4">
               <div className="flex items-center justify-between">
@@ -247,7 +247,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
             </div>
           </div>
 
-          {/* Filtros de Licitaciones */}
+        
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -282,7 +282,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
             </div>
           </div>
 
-          {/* Lista de Licitaciones */}
+         
           <div className="space-y-4">
             {filteredLicitaciones.length === 0 ? (
               <div className="text-center py-12">
@@ -371,7 +371,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
         </div>
       </div>
 
-      {/* Modal Nueva Licitación */}
+    
       {showNewLicitacion && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto" onClick={() => !loading && setShowNewLicitacion(false)}>
           <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 my-8 max-h-[90vh] overflow-y-auto fade-in" onClick={(e) => e.stopPropagation()}>
@@ -380,7 +380,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
             </div>
             
             <form onSubmit={handleCreateLicitacion} className="p-6 space-y-4">
-              {/* Información Básica */}
+         
               <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                 <h4 className="font-semibold text-gray-800">Información Básica</h4>
                 
@@ -457,7 +457,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
                 </div>
               </div>
 
-              {/* Clasificación */}
+           
               <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                 <h4 className="font-semibold text-gray-800">Clasificación</h4>
                 
@@ -500,7 +500,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
                 </div>
               </div>
 
-              {/* Información Financiera */}
+           
               <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                 <h4 className="font-semibold text-gray-800">Información Financiera</h4>
                 
@@ -540,7 +540,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
                 </div>
               </div>
 
-              {/* Fechas */}
+            
               <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                 <h4 className="font-semibold text-gray-800">Fechas Importantes</h4>
                 
@@ -571,7 +571,7 @@ export default function LicitacionesModal({ licitaciones, setLicitaciones, onClo
                 </div>
               </div>
 
-              {/* Botones */}
+             
               <div className="flex justify-end space-x-3 pt-4 border-t">
                 <button
                   type="button"

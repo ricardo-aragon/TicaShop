@@ -30,7 +30,7 @@ export default function TicketDetailModal({ ticket, onClose, onUpdateTicket }: T
 
     const updatedTicket = { ...ticket };
     
-    // Agregar comentario
+  
     const comment = {
       id: ticket.comments.length + 1,
       author: 'Agente de Soporte',

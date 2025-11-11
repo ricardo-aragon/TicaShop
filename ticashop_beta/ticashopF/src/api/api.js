@@ -93,7 +93,10 @@ export const getLicitacionesByEstado = (estado) => api.get(`/Licitacion/?estado=
 export const getAllReportes = () => api.get('/Reporte/');
 export const getReporteById = (id) => api.get(`/Reporte/${id}/`);
 export const createReporte = (data) => api.post('/Reporte/', data);
+export const updateReporte = (id, data) => api.patch(`/Reporte/${id}/`, data);
+export const deleteReporte = (id) => api.delete(`/Reporte/${id}/`);
 export const getReportesByFecha = (fecha) => api.get(`/Reporte/?fecha=${fecha}`);
 export const getUltimoReporte = () => api.get('/Reporte/?ordering=-fecha&limit=1');
+
 
 export default api;
