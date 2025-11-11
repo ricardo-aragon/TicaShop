@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "691020bbdb463d44caee0b9a"
+  },
+  "id": 1,
+  "idUsuario_id": 5,
+  "desc": "vacaciones",
+  "propuesta": "salir de vacaciones",
+  "estado": "Publicada",
+  "fecha_creacion": {
+    "$date": "2025-11-09T00:00:00.000Z"
+  }
+}]

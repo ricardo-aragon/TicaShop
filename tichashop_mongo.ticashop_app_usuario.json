@@ -1,0 +1,55 @@
+[{
+  "_id": {
+    "$oid": "690802169c9bb792ab6c5ccd"
+  },
+  "id": 5,
+  "nombre": "Samanta",
+  "apellido": "Calabaza",
+  "correo": "s.calabaza@correo.cl",
+  "rol": "soporte",
+  "password": "pollo1234"
+},
+{
+  "_id": {
+    "$oid": "691254f6cc944e2d1147eedf"
+  },
+  "id": 7,
+  "nombre": "carlos",
+  "apellido": "Sandia",
+  "correo": "carlos.sandia@correo.com",
+  "rol": "admin",
+  "password": "pollo1234"
+},
+{
+  "_id": {
+    "$oid": "69125df5cc944e2d1147eee2"
+  },
+  "id": 10,
+  "nombre": "Lucas",
+  "apellido": "Pan",
+  "correo": "lucas.pan@correo.cl",
+  "rol": "admin",
+  "password": "pollo1234"
+},
+{
+  "_id": {
+    "$oid": "69128967a78dabc240bb768c"
+  },
+  "id": 11,
+  "nombre": "sus",
+  "apellido": "pas",
+  "correo": "sus@correo.cl",
+  "rol": "tecnico",
+  "password": "pansus"
+},
+{
+  "_id": {
+    "$oid": "6912aa29e5d41b833581a37e"
+  },
+  "id": 12,
+  "nombre": "sss",
+  "apellido": "dddd",
+  "correo": "ddd@correo.cl",
+  "rol": "admin",
+  "password": "pollo1234"
+}]
