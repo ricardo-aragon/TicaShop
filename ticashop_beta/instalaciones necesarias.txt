@@ -9,3 +9,32 @@ pip install coreapi
 npm install tailwindcss-variants
 
 Python 3.9.13
+
+sistemas nesesarios
+
+ackage             Version
+------------------- ---------
+asgiref             3.10.0
+certifi             2025.10.5
+charset-normalizer  3.4.4
+coreapi             2.3.3
+coreschema          0.0.4
+Django              4.1.13
+django-cors-headers 3.13.0
+djangorestframework 3.14.0
+djongo              1.3.6
+dnspython           2.7.0
+idna                3.11
+itypes              1.2.0
+Jinja2              3.1.6
+MarkupSafe          3.0.3
+pip                 22.0.4
+pymongo             3.11.4
+pytz                2025.2
+requests            2.32.5
+setuptools          58.1.0
+sqlparse            0.2.4
+typing_extensions   4.15.0
+tzdata              2025.2
+uritemplate         4.2.0
+urllib3             2.5.0
