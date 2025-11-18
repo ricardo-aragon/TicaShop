@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\papac\Desktop\programas\PI\TicaShop\ticashop_beta\venv
+set VIRTUAL_ENV=C:\Users\alumnoslgr\Desktop\PI\TicaShop\ticashop_beta\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

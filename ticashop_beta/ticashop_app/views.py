@@ -112,7 +112,7 @@ class ticketView(viewsets.ModelViewSet):
         if not usuario:
             return Response({'error': 'Usuario no autenticado'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        if usuario.rol not in ['soporte', 'admin']:
+        if usuario.rol not in ['soporte', 'admin', 'especialista']:
             return Response({'error': 'No tienes permiso para crear tickets'}, status=status.HTTP_403_FORBIDDEN)
 
         data = request.data.copy()

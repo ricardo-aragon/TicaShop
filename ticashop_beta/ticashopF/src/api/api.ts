@@ -149,14 +149,19 @@ const transformTicketToBackend = (frontendTicket: any) => {
     };
 
     return {
-        titulo: frontendTicket.title,
-        descripcion: frontendTicket.description,
-        prioridad: priorityMap[frontendTicket.priority] || frontendTicket.priority,
-        estado: statusMap[frontendTicket.status] || frontendTicket.status,
-        categoria: frontendTicket.category,
-        nombre_cliente: frontendTicket.customer,
-        email_cliente: frontendTicket.email,
-        telefono_cliente: frontendTicket.phone
+        idUsuario: frontendTicket.idUsuario_id,
+
+        nombre_cliente: frontendTicket.nombre_cliente,
+        email_cliente: frontendTicket.email_cliente,
+        telefono_cliente: frontendTicket.telefono_cliente,
+
+        titulo: frontendTicket.titulo || frontendTicket.title,
+        desc: frontendTicket.desc || frontendTicket.description,
+
+        categoria: frontendTicket.categoria || frontendTicket.category,
+        prioridad: frontendTicket.prioridad,
+
+        estado: frontendTicket.estado,
     };
 };
 

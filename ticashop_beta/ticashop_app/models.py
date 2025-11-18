@@ -24,7 +24,6 @@ class Ticket(models.Model):
     # Información del cliente reportante
     nombre_cliente = models.CharField(max_length=200, default='Cliente')
     email_cliente = models.EmailField(max_length=200, default='cliente@ejemplo.com')
-    telefono_cliente = models.CharField(max_length=50, null=True, blank=True)
     
     # Información del ticket
     titulo = models.CharField(max_length=200, default='Ticket')
