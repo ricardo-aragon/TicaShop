@@ -6,6 +6,7 @@ interface HeaderProps {
   user: User | null;
   onLogout: () => void;
   onNavigateToAdmin?: () => void;
+  onNavigateToEspecialista?: () => void; 
   showAdminButton?: boolean;
 }
 
@@ -19,11 +20,19 @@ interface Notification {
   isRead: boolean;
 }
 
-export default function Header({ user, onLogout, onNavigateToAdmin, showAdminButton }: HeaderProps) {
+export default function Header({ 
+  user, 
+  onLogout, 
+  onNavigateToAdmin, 
+  onNavigateToEspecialista, // ✅ NUEVO
+  showAdminButton 
+}: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // ... (todo el código de notificaciones permanece igual) ...
 
   useEffect(() => {
     cargarNotificaciones();
@@ -185,6 +194,7 @@ export default function Header({ user, onLogout, onNavigateToAdmin, showAdminBut
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {/* ✅ BOTÓN PANEL ADMIN */}
               {showAdminButton && onNavigateToAdmin && (
                 <button
                   onClick={onNavigateToAdmin}
@@ -195,6 +205,27 @@ export default function Header({ user, onLogout, onNavigateToAdmin, showAdminBut
                 </button>
               )}
 
+              {/* ✅ NUEVO: BOTÓN PANEL ESPECIALISTA */}
+              {(user?.role === 'admin' || user?.role === 'especialista') && onNavigateToEspecialista && (
+                <button
+                  onClick={onNavigateToEspecialista}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium shadow-md hover:shadow-lg flex items-center space-x-2"
+                >
+                  {user?.role === 'admin' ? (
+                    <>
+                      <span>👑</span>
+                      <span>Especialista</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>👤</span>
+                      <span>Panel Especialista</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Notificaciones */}
               <div className="relative">
                 <button
                   onClick={() => {
@@ -301,6 +332,7 @@ export default function Header({ user, onLogout, onNavigateToAdmin, showAdminBut
                 )}
               </div>
               
+              {/* Usuario y logout */}
               <div className="flex items-center space-x-2">
                 <span className="text-gray-700 font-medium">{user?.name}</span>
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">

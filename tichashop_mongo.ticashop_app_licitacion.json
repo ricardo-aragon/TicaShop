@@ -1,13 +1,13 @@
 [{
   "_id": {
-    "$oid": "691020bbdb463d44caee0b9a"
+    "$oid": "691ba8638a9685c4df95a831"
   },
   "id": 1,
-  "idUsuario_id": 5,
-  "desc": "vacaciones",
-  "propuesta": "salir de vacaciones",
-  "estado": "Publicada",
+  "idUsuario_id": 3,
+  "desc": "rtbtryntyn",
+  "propuesta": "rbrybtnrnt",
+  "estado": "En Evaluación",
   "fecha_creacion": {
-    "$date": "2025-11-09T00:00:00.000Z"
+    "$date": "2025-11-17T00:00:00.000Z"
   }
 }]

@@ -10,6 +10,7 @@ import TicketDetailModal from './TicketDetailModal';
 import LicitacionesModal from './LicitacionesModal';
 import ReportesModal from './ReportesModal';
 import { showNotification } from '../utils/notifications';
+import { getCurrentUser } from "../api/api"; 
 import { 
   getAllTickets, 
   createTicket, 
@@ -27,6 +28,12 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ tickets, setTickets, licitaciones, setLicitaciones }: DashboardProps) {
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  useEffect(() => {
+    const user = getCurrentUser();
+    setCurrentUser(user);
+  }, []);
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
   const [showTicketDetailModal, setShowTicketDetailModal] = useState(false);
   const [showLicitacionesModal, setShowLicitacionesModal] = useState(false);
@@ -38,6 +45,8 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
   const [priorityFilter, setPriorityFilter] = useState<Priority | ''>('');
   const [categoryFilter, setCategoryFilter] = useState<Category | ''>('');
 
+
+  
   
   useEffect(() => {
     cargarDatos();
@@ -50,33 +59,24 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         getAllTickets(),
         getAllLicitaciones()
       ]);
-
       
-      const ticketsMapeados: Ticket[] = ticketsRes.data.map((t: any) => ({
-        id: t.id,
-        title: t.desc.substring(0, 50), 
-        customer: t.idUsuario?.nombre || 'Cliente Desconocido',
-        email: t.idUsuario?.correo || '',
-        priority: mapPriorityFromEstado(t.estado),
-        category: 'technical', 
-        status: mapStatusFromEstado(t.estado),
-        description: t.desc,
-        createdAt: new Date(t.fecha_creacion),
-        updatedAt: new Date(t.fecha_creacion),
-        assignedTo: t.idTecnico ? `${t.idTecnico.nombre} ${t.idTecnico.apellido}` : null,
-        comments: []
-      }));
-
+      console.log("=== TICKETS DESDE BACKEND ===");
+      console.log("Cantidad de tickets:", ticketsRes.data.length);
+      console.log("Primer ticket RAW:", ticketsRes.data[0]);
+      console.log("============================");
       
+      // ✅ USAR LA FUNCIÓN mapDjangoTicket EXISTENTE EN LUGAR DE DUPLICAR CÓDIGO
+      const ticketsMapeados: Ticket[] = ticketsRes.data.map((t: any) => mapDjangoTicket(t));
+
       const licitacionesMapeadas: Licitacion[] = licitacionesRes.data.map((l: any) => ({
         id: l.id,
-        titulo: l.desc.substring(0, 50),
-        descripcion: l.desc,
-        propuesta: l.propuesta,
-        estado: l.estado,
+        titulo: (l.desc || l.titulo || "Sin título").substring(0, 50), // ✅ Validación segura
+        descripcion: l.desc || l.descripcion || "",
+        propuesta: l.propuesta || "",
+        estado: l.estado || "borrador",
         fechaCreacion: new Date(l.fecha_creacion),
         cliente: l.idUsuario?.nombre || 'Cliente Desconocido',
-        monto: 0 
+        monto: l.monto || 0
       }));
 
       setTickets(ticketsMapeados);
@@ -130,17 +130,53 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
         showNotification('Error: Usuario no identificado', 'error');
         return;
       }
+      console.log("=== DEBUG CREAR TICKET ===");
+      console.log("ticketData recibido:", ticketData);
+      console.log("customer:", ticketData.customer);
+      console.log("email:", ticketData.email);
+      console.log("phone:", ticketData.phone);
+      console.log("========================");
 
-      
+      // Mapear prioridad al formato Django
+      const prioridadMap: Record<string, string> = {
+        'high': 'alta',
+        'medium': 'media',
+        'low': 'baja'
+      };
+
+      // Mapear categoría al formato Django
+      const categoriaMap: Record<string, string> = {
+        'technical': 'technical',
+        'account': 'account',
+        'order': 'order',
+        'billing': 'billing',
+        'other': 'other'
+      };
+
+      // ✅ NUEVO: Incluir TODOS los campos del cliente
       const nuevoTicketDjango = {
-        idUsuario_id: parseInt(userId),  
+        idUsuario_id: parseInt(userId),
+        
+        // Información del cliente
+        nombre_cliente: ticketData.customer,
+        email_cliente: ticketData.email,
+        telefono_cliente: ticketData.phone || '',
+        
+        // Información del ticket
+        titulo: ticketData.title,
         desc: ticketData.description,
+        categoria: categoriaMap[ticketData.category] || 'technical',
+        prioridad: prioridadMap[ticketData.priority] || 'media',
         estado: mapStatusToDjango(ticketData.status)
       };
 
+      console.log("📤 Enviando ticket con datos del cliente:", nuevoTicketDjango);
+
       const response = await createTicket(nuevoTicketDjango);
 
-      
+      console.log("✅ Respuesta completa de Django:", response.data);
+
+      // Recargar datos
       await cargarDatos();
       
       setShowNewTicketModal(false);
@@ -148,8 +184,8 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
     } catch (error: any) {
       console.error('Error al crear ticket:', error);
       const errorMsg = error.response?.data?.detail || 
-                       error.response?.data?.idUsuario_id?.[0] || 
-                       'Error al crear el ticket';
+                      error.response?.data?.idUsuario_id?.[0] || 
+                      'Error al crear el ticket';
       showNotification(errorMsg, 'error');
     }
   };
@@ -159,23 +195,54 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
     setShowTicketDetailModal(true);
   };
 
-  const handleUpdateTicket = async (updatedTicket: Ticket) => {
-    try {
-      
-      const ticketDjango = {
-        desc: updatedTicket.description,
-        estado: mapStatusToDjango(updatedTicket.status)
-      };
+  const mapDjangoTicket = (t: any): Ticket => ({
+    id: t.id,
+    
+    // ✅ Validación segura en el title
+    title: t.titulo || t.title || (t.desc ? t.desc.substring(0, 50) : "Ticket sin título"),
+    
+    description: t.desc || t.descripcion || "",
 
-      await updateTicket(updatedTicket.id, ticketDjango);
+    // ✅ Usar los datos transformados que vienen de la API
+    customer: t.customer || t.nombre_cliente || "Cliente Desconocido",
+    email: t.email || t.email_cliente || "",
+    phone: t.phone || t.telefono_cliente || undefined,
 
-     
-      setTickets(tickets.map(t => t.id === updatedTicket.id ? updatedTicket : t));
-      showNotification('Ticket actualizado exitosamente', 'success');
-    } catch (error) {
-      console.error('Error al actualizar ticket:', error);
-      showNotification('Error al actualizar el ticket', 'error');
-    }
+    // Estado → status interno
+    status:
+      (t.status === "open" || t.estado?.toLowerCase() === "abierto") ? "open" :
+      (t.status === "in-progress" || t.estado?.toLowerCase() === "en proceso") ? "in-progress" :
+      (t.status === "closed" || t.estado?.toLowerCase() === "cerrado") ? "closed" :
+      "open",
+
+    // Prioridad
+    priority:
+      (t.priority === "high" || t.prioridad?.toLowerCase() === "alta") ? "high" :
+      (t.priority === "medium" || t.prioridad?.toLowerCase() === "media") ? "medium" :
+      (t.priority === "low" || t.prioridad?.toLowerCase() === "baja") ? "low" :
+      "medium",
+
+    // Categoría
+    category: (t.category || t.categoria || "technical") as Category,
+
+    // Técnico asignado - Soporta ambos formatos
+    assignedTo: t.assignedTo || 
+                (t.idTecnico ? `${t.idTecnico.nombre} ${t.idTecnico.apellido}` : null),
+
+    // Fechas
+    createdAt: t.createdAt || new Date(t.fecha_creacion),
+    updatedAt: t.updatedAt || new Date(t.fecha_actualizacion ?? t.fecha_creacion),
+
+    // Comentarios
+    comments: t.comments || []
+  });
+
+  const handleUpdateTicket = (responseTicket: any) => {
+    const ticketMapped = mapDjangoTicket(responseTicket);
+
+    setTickets(prev =>
+      prev.map(t => (t.id === ticketMapped.id ? ticketMapped : t))
+    );
   };
 
   const handleDeleteTicket = async (ticketId: number) => {
@@ -283,7 +350,7 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
                   </button>
                   <button
                     onClick={cargarDatos}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
                   >
                     🔄 Recargar
                   </button>
@@ -348,8 +415,11 @@ export default function Dashboard({ tickets, setTickets, licitaciones, setLicita
             setSelectedTicketId(null);
           }}
           onUpdateTicket={handleUpdateTicket}
+          onDeleteTicket={handleDeleteTicket}
+          currentUser={currentUser}
         />
       )}
+
 
       {showLicitacionesModal && (
         <LicitacionesModal

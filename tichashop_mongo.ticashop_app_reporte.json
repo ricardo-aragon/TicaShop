@@ -1,36 +1,12 @@
 [{
   "_id": {
-    "$oid": "6911059930f9f893edea3037"
+    "$oid": "691ba86e8a9685c4df95a832"
   },
   "idReporte": 1,
   "fecha": {
-    "$date": "2025-11-09T00:00:00.000Z"
+    "$date": "2025-11-17T00:00:00.000Z"
   },
-  "ticketsAbiertos": 2,
+  "ticketsAbiertos": 5,
   "ticketsCerrados": 0,
-  "tiempoProResolucion": 0
-},
-{
-  "_id": {
-    "$oid": "691105a030f9f893edea3038"
-  },
-  "idReporte": 2,
-  "fecha": {
-    "$date": "2025-11-09T00:00:00.000Z"
-  },
-  "ticketsAbiertos": 2,
-  "ticketsCerrados": 0,
-  "tiempoProResolucion": 0
-},
-{
-  "_id": {
-    "$oid": "69124b16bbeca7b7d2131dde"
-  },
-  "idReporte": 3,
-  "fecha": {
-    "$date": "2025-11-10T00:00:00.000Z"
-  },
-  "ticketsAbiertos": 2,
-  "ticketsCerrados": 1,
   "tiempoProResolucion": 0
 }]

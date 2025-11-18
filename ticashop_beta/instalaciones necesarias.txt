@@ -6,5 +6,6 @@ pip install djangorestframework==3.14.0
 pip install django-cors-headers==3.13.0
 npm i react-router-dom react-hot-toast axios react-hook-form
 pip install coreapi
+npm install tailwindcss-variants
 
 Python 3.9.13

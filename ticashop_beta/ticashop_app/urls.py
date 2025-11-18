@@ -8,7 +8,7 @@ router.register(r'Usuario', views.usuarioView, 'usuario')
 router.register(r'Ticket', views.ticketView, 'ticket')
 router.register(r'Licitacion', views.licitacionView, 'licitacion')
 router.register(r'Reporte', views.reporteView, 'reporte')
-
+router.register(r'Comentario', views.comentarioView, 'comentario')
 
 
 urlpatterns = [

@@ -3,10 +3,11 @@ import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
 import Header from './components/Header';
 import AdminPanel from './components/AdminPanel';
+import EspecialistaPanel from './components/EspecialistaPanel';
 import AdminRoute from './components/AdminRoute';
 import { Ticket, Licitacion, User } from './types';
 
-type View = 'dashboard' | 'admin';
+type View = 'dashboard' | 'admin' | 'especialista';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,7 +16,6 @@ function App() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [licitaciones, setLicitaciones] = useState<Licitacion[]>([]);
 
-  
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -54,6 +54,14 @@ function App() {
     }
   };
 
+  const navigateToEspecialista = () => {
+    if (currentUser?.role === 'especialista' || currentUser?.role === 'admin') {
+      setCurrentView('especialista');
+    } else {
+      alert('⚠️ Acceso denegado. Solo especialistas pueden acceder.');
+    }
+  };
+
   const navigateToDashboard = () => {
     setCurrentView('dashboard');
   };
@@ -67,10 +75,15 @@ function App() {
           <Header 
             user={currentUser} 
             onLogout={handleLogout}
-            onNavigateToAdmin={navigateToAdmin}
+            onNavigateToAdmin={currentUser?.role === 'admin' ? navigateToAdmin : undefined}
+            onNavigateToEspecialista={
+            (currentUser?.role === 'admin' || currentUser?.role === 'especialista') 
+              ? navigateToEspecialista 
+              : undefined
+          }
             showAdminButton={currentUser?.role === 'admin'}
           />
-          
+        
           {currentView === 'dashboard' ? (
             <Dashboard 
               tickets={tickets} 
@@ -78,10 +91,12 @@ function App() {
               licitaciones={licitaciones}
               setLicitaciones={setLicitaciones}
             />
-          ) : (
+          ) : currentView === 'admin' ? (
             <AdminRoute>
               <AdminPanel onBack={navigateToDashboard} />
             </AdminRoute>
+          ) : (
+            <EspecialistaPanel onBack={navigateToDashboard} />
           )}
         </>
       )}

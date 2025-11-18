@@ -724,6 +724,7 @@ export default function AdminPanel({ onBack }: { onBack: () => void }) {
                 <option value="admin">Administrador</option>
                 <option value="soporte">Soporte</option>
                 <option value="tecnico">Técnico</option>
+                <option value="especialista">especialista</option>
               </select>
             </div>
             <div>

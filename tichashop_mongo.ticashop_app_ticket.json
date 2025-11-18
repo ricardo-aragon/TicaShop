@@ -1,56 +1,140 @@
 [{
   "_id": {
-    "$oid": "690fa177a18dd44232b4ac59"
+    "$oid": "691a7b8b09fbd0a11549efef"
   },
   "id": 1,
-  "idUsuario_id": 5,
-  "idTecnico_id": null,
-  "desc": "cables cortados en la calle 3333",
-  "estado": "Abierto",
-  "fecha_creacion": {
-    "$date": "2025-11-08T20:00:55.092Z"
-  },
-  "fecha_cierre": null
-},
-{
-  "_id": {
-    "$oid": "69101f95db463d44caee0b99"
-  },
-  "id": 2,
-  "idUsuario_id": 5,
-  "idTecnico_id": null,
-  "desc": "cccccc",
+  "idUsuario_id": 1,
+  "idTecnico_id": 1,
+  "nombre_cliente": "Cliente",
+  "email_cliente": "cliente@ejemplo.com",
+  "telefono_cliente": null,
+  "titulo": "Ticket",
+  "desc": "sssss",
+  "categoria": "technical",
+  "prioridad": "alta",
   "estado": "En Proceso",
   "fecha_creacion": {
-    "$date": "2025-11-09T04:59:01.396Z"
+    "$date": "2025-11-17T01:34:03.274Z"
   },
-  "fecha_cierre": null
+  "fecha_cierre": null,
+  "fecha_actualizacion": {
+    "$date": "2025-11-17T21:01:42.979Z"
+  }
 },
 {
   "_id": {
-    "$oid": "691106b430f9f893edea3039"
+    "$oid": "691a8e0909fbd0a11549eff3"
   },
-  "id": 3,
-  "idUsuario_id": 5,
+  "id": 2,
+  "idUsuario_id": 1,
   "idTecnico_id": null,
-  "desc": "coca en la sala",
-  "estado": "Cerrado",
-  "fecha_creacion": {
-    "$date": "2025-11-09T21:25:08.339Z"
-  },
-  "fecha_cierre": null
-},
-{
-  "_id": {
-    "$oid": "69124accbbeca7b7d2131ddd"
-  },
-  "id": 4,
-  "idUsuario_id": 5,
-  "idTecnico_id": null,
-  "desc": "ddddd",
+  "nombre_cliente": "coco colen",
+  "email_cliente": "coco@correo.com",
+  "telefono_cliente": "",
+  "titulo": "fffff",
+  "desc": "fffffff",
+  "categoria": "other",
+  "prioridad": "baja",
   "estado": "Abierto",
   "fecha_creacion": {
-    "$date": "2025-11-10T20:27:56.955Z"
+    "$date": "2025-11-17T02:52:57.761Z"
   },
-  "fecha_cierre": null
+  "fecha_cierre": null,
+  "fecha_actualizacion": {
+    "$date": "2025-11-17T21:01:42.979Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "691a8e8209fbd0a11549eff4"
+  },
+  "id": 3,
+  "idUsuario_id": 1,
+  "idTecnico_id": null,
+  "nombre_cliente": "carlos papa",
+  "email_cliente": "carlos.p@correo.cl",
+  "telefono_cliente": "",
+  "titulo": "ddddd",
+  "desc": "gbtynyun",
+  "categoria": "other",
+  "prioridad": "baja",
+  "estado": "Abierto",
+  "fecha_creacion": {
+    "$date": "2025-11-17T02:54:58.689Z"
+  },
+  "fecha_cierre": null,
+  "fecha_actualizacion": {
+    "$date": "2025-11-17T21:01:42.979Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "691a8f89d887f34ade6bd45c"
+  },
+  "id": 4,
+  "idUsuario_id": 1,
+  "idTecnico_id": null,
+  "nombre_cliente": "carlos papa",
+  "email_cliente": "carlos.p@correo.cl",
+  "telefono_cliente": "",
+  "titulo": "brtbtry",
+  "desc": "brbrfbrt",
+  "categoria": "other",
+  "prioridad": "baja",
+  "estado": "Abierto",
+  "fecha_creacion": {
+    "$date": "2025-11-17T02:59:21.511Z"
+  },
+  "fecha_cierre": null,
+  "fecha_actualizacion": {
+    "$date": "2025-11-17T21:01:42.979Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "691a904ed887f34ade6bd45d"
+  },
+  "id": 5,
+  "idUsuario_id": 1,
+  "idTecnico_id": null,
+  "nombre_cliente": "samanta giler",
+  "email_cliente": "sama@correo.com",
+  "telefono_cliente": "",
+  "titulo": "rtbrtbtybt",
+  "desc": "brtbrbre",
+  "categoria": "other",
+  "prioridad": "baja",
+  "estado": "Abierto",
+  "fecha_creacion": {
+    "$date": "2025-11-17T03:02:38.609Z"
+  },
+  "fecha_cierre": null,
+  "fecha_actualizacion": {
+    "$date": "2025-11-17T21:01:42.979Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "691aafd59e26cde775d9a67a"
+  },
+  "id": 6,
+  "idUsuario_id": 1,
+  "idTecnico_id": 1,
+  "nombre_cliente": "coco colen",
+  "email_cliente": "coco@correo.com",
+  "telefono_cliente": "",
+  "titulo": "gbtbtb",
+  "desc": "tbrbrtb",
+  "categoria": "other",
+  "prioridad": "media",
+  "estado": "Cerrado",
+  "fecha_creacion": {
+    "$date": "2025-11-17T05:17:09.350Z"
+  },
+  "fecha_cierre": {
+    "$date": "2025-11-18T01:16:01.426Z"
+  },
+  "fecha_actualizacion": {
+    "$date": "2025-11-18T01:16:01.428Z"
+  }
 }]

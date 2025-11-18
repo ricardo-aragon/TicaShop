@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, Ticket, Licitacion, Reporte
+from .models import Usuario, Ticket, Licitacion, Reporte, Comentario
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,6 +11,21 @@ class UsuarioBasicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['id', 'nombre', 'apellido', 'correo', 'rol']
+
+class ComentarioSerializer(serializers.ModelSerializer):
+    usuario = UsuarioBasicoSerializer(read_only=True)
+    usuario_id = serializers.IntegerField(write_only=True, required=False)
+
+    class Meta:
+        model = Comentario
+        fields = ['id', 'ticket', 'texto', 'fecha', 'usuario', 'usuario_id', 'fichaTecnica']
+        read_only_fields = ['id', 'fecha', 'usuario']
+
+    def create(self, validated_data):
+        usuario_id = validated_data.pop('usuario_id', None)
+        if usuario_id:
+            validated_data['usuario_id'] = usuario_id
+        return super().create(validated_data)
 
 class TicketSerializer(serializers.ModelSerializer):
     # Incluir datos relacionados del usuario y técnico
@@ -29,6 +44,9 @@ class TicketSerializer(serializers.ModelSerializer):
         # Manejar IDs de usuario y técnico
         usuario_id = validated_data.pop('idUsuario_id', None)
         tecnico_id = validated_data.pop('idTecnico_id', None)
+        idUsuario_id = serializers.IntegerField(write_only=True, required=False)
+        idTecnico_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+        comentarios = ComentarioSerializer(many=True, read_only=True)
         
         if usuario_id:
             validated_data['idUsuario_id'] = usuario_id
