@@ -78,7 +78,6 @@ class Comentario(models.Model):
     texto = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
     
-    # ✨ NUEVO: Campo para ficha técnica (JSON)
     fichaTecnica = models.JSONField(null=True, blank=True)
 
     def __str__(self):
